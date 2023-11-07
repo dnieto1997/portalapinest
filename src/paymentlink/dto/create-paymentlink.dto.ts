@@ -1,5 +1,7 @@
+
 import { IsString,IsNumber,IsNotEmpty,MinLength, IsOptional } from "class-validator";
-export class CreateMovimientosColombiaDto {
+export class CreatePaymentlinkDto {
+
     @IsNotEmpty()
     @IsString()
     reference: string;
@@ -54,8 +56,7 @@ export class CreateMovimientosColombiaDto {
     return_url: string;
 
     @IsOptional()
-    @IsString()
-    merchant_id: string;
-
+    @IsNumber()
+    merchant_id: number;
 
 }

@@ -4,6 +4,7 @@ import { CreateLoginDashDto } from './dto/create-login_dash.dto';
 import { UpdateLoginDashDto } from './dto/update-login_dash.dto';
 import { AuthGuard } from '../auth/auth.guard';
 import { ApiCreatedResponse, ApiForbiddenResponse, ApiTags } from '@nestjs/swagger';
+
 @ApiTags('login-dash')
 @Controller('login-dash')
 export class LoginDashController {

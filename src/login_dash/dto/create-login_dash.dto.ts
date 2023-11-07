@@ -1,4 +1,4 @@
-import { IsNotEmpty, IsNumber, IsString, Matches, MaxLength } from "class-validator";
+import { IsNotEmpty, IsNumber, IsOptional, IsString, Matches, MaxLength } from "class-validator";
 
 export class CreateLoginDashDto {
 
@@ -14,7 +14,7 @@ export class CreateLoginDashDto {
     @IsString()
     log_tipo: string;
 
-    @IsNotEmpty()
+    @IsOptional()
     @IsNumber()
     cashout: number;
 

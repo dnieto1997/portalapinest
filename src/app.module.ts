@@ -26,6 +26,9 @@ import { TopupNequiModule } from './topup_nequi/topup_nequi.module';
 import { ConfNequiModule } from './conf_nequi/conf_nequi.module';
 import { PermissionModule } from './permission/permission.module';
 import { BlacklistModule } from './blacklist/blacklist.module';
+import { ChangepasswordModule } from './changepassword/changepassword.module';
+import { PaymentlinkModule } from './paymentlink/paymentlink.module';
+import { ConfigModule } from './config/config.module';
 
 @Module({
   imports: [
@@ -66,6 +69,9 @@ import { BlacklistModule } from './blacklist/blacklist.module';
     ConfNequiModule,
     PermissionModule,
     BlacklistModule,
+    ChangepasswordModule,
+    PaymentlinkModule,
+    ConfigModule,
   ],
   controllers: [],
   providers: [],
