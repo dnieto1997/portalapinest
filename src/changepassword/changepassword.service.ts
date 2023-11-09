@@ -46,7 +46,7 @@ export class ChangepasswordService {
      const save = this.logiDashRepository.save(passNew)
 
      return {
-      "Message":"Contraseña cambiada con exito"
+      "Message":"Password changed successfully"
      }
 
      

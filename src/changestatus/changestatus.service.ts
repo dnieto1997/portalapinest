@@ -18,8 +18,8 @@ export class ChangestatusService {
     private movimientoscol: Repository<MovimientosColombia>,
     @InjectRepository(Masiva) 
     private masiva: Repository<Masiva>,
-    @InjectRepository(MovimientosPeru) private MovimientosRepositoryper: Repository<MovimientosPeru>,
-    @InjectRepository(MovimientosMexico) private MovimientosRepositorymxt: Repository<MovimientosMexico>,
+    @InjectRepository(MovimientosPeru) private movementsperu: Repository<MovimientosPeru>,
+    @InjectRepository(MovimientosMexico) private movementsmx: Repository<MovimientosMexico>,
     @InjectRepository(Merchant) 
     private merchant: Repository<Merchant>,
     private readonly callbackService: CallbackService
@@ -45,8 +45,8 @@ export class ChangestatusService {
     let updateResult = "";
 
     const selectedRepository =
-    country === 'PEN' ? this.MovimientosRepositoryper :
-    country === 'MXT' ? this.MovimientosRepositorymxt :
+    country === 'PEN' ? this.movementsperu :
+    country === 'MXT' ? this.movementsmx :
      this.movimientoscol
 
      if(type == "I"){
@@ -113,10 +113,10 @@ export class ChangestatusService {
     };
   
 
-    const llamar = await this.callbackService.Callback(requestBody)
+    const call = await this.callbackService.Callback(requestBody)
    
        
-      if (llamar) {
+      if (call) {
       return {message:` Successfully changede`,status: 1}
     }else{
       return {

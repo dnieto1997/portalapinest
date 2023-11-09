@@ -20,7 +20,7 @@ export class TopupNequiService {
     @InjectRepository(ConfNequi)
     private config_nequi: Repository<ConfNequi>,
     @InjectRepository(MovimientosColombia)
-    private movimientoscol: Repository<MovimientosColombia>,
+    private movementscol: Repository<MovimientosColombia>,
     @InjectRepository(Merchant)
     private aliados: Repository<Merchant>,
     @InjectRepository(TopupNequi)
@@ -44,11 +44,11 @@ export class TopupNequiService {
 
     const toppay = await this.config_nequi.findOneBy({ uid: 1 })
 
-    let aliado = JSON.parse(toppay.aliados)
+    let merchant = JSON.parse(toppay.aliados)
 
-    const movimientos = await this.movimientoscol
+    const movements = await this.movementscol
       .createQueryBuilder('movimientos')
-      .where('movimientos.merchant_id IN (:...aliado)', { aliado: aliado }) // Utiliza el parámetro aliado
+      .where('movimientos.merchant_id IN (:...merchant)', { merchant: merchant }) // Utiliza el parámetro aliado
       .andWhere('movimientos.status = :status', { status: 2 })
       .andWhere('movimientos.method = :method', { method: 'TUP_OUT' })
       .andWhere('movimientos.currency = :currency', { currency: 'COP' })
@@ -61,7 +61,7 @@ export class TopupNequiService {
 
        
        
-    return movimientos
+    return movements
 
   }
 
@@ -82,9 +82,9 @@ export class TopupNequiService {
     return await this.config_nequi.save(updateUser);
 
   }
-  async recargar(uid, response) {
+  async recharge(uid, response) {
     const date = dateact
-    const searchMov = await this.movimientoscol.findBy({ uid: uid })
+    const searchMov = await this.movementscol.findBy({ uid: uid })
     const searchUrl = await this.aliados.findBy({ uid: searchMov[0].merchant_id })
     const cost = Number(searchUrl[0].cashout);
     const iva = cost * searchUrl[0].iva;
@@ -111,12 +111,12 @@ export class TopupNequiService {
         notify: 'E',
         updated_at: date
       }
-      const updateMovimiento = await this.movimientoscol.preload({
+      const updateMovimiento = await this.movementscol.preload({
         uid:searchMov[0].uid,
       ...Update
     });
-    const saveMovimiento = await this.movimientoscol.save(updateMovimiento);
-      const ActMov = await this.movimientoscol.save(Update)
+    const saveMovimiento = await this.movementscol.save(updateMovimiento);
+      const ActMov = await this.movementscol.save(Update)
        const requestBody = ({
         reference: searchMov[0].reference,
         status: 'success',
@@ -173,7 +173,7 @@ export class TopupNequiService {
         });
 
       } else {
-        const searchMov = await this.movimientoscol.findOneBy({ uid: uid })
+        const searchMov = await this.movementscol.findOneBy({ uid: uid })
         const Update = {
           status: 3,
           cost: cost,
@@ -182,11 +182,11 @@ export class TopupNequiService {
           updated_at: date
         }
 
-        const updateMovimiento = await this.movimientoscol.preload({
+        const updateMovimiento = await this.movementscol.preload({
           uid:searchMov.uid,
         ...Update
       });
-        const ActMov = await this.movimientoscol.save(updateMovimiento)
+        const ActMov = await this.movementscol.save(updateMovimiento)
         const searchmerchant = await this.aliados.findBy({ uid: searchMov.merchant_id})
         if (arrResp.error == 'REFERENCE_INVALID' || arrResp.error == 'INVALID_DATA' || arrResp.error == 'INCOMPLETE_DATA') {
           
@@ -243,7 +243,7 @@ export class TopupNequiService {
 
 
 
-  async recargartodo(array:ArrayTopup,response) {
+  async rechargeall(array:ArrayTopup,response) {
     const date = dateact;
     let detenerBucle = false;
     const responses = [];
@@ -251,7 +251,7 @@ export class TopupNequiService {
 
     for( let element of  array.array){
 
-      const searchMov= await this.movimientoscol.findOneBy({uid:Number(element.uid)})
+      const searchMov= await this.movementscol.findOneBy({uid:Number(element.uid)})
       const searchUrl= await this.aliados.findOneBy({uid:Number(searchMov.merchant_id)})
       const cost = Number(searchUrl.cashout)
       const iva = cost * searchUrl.iva
@@ -270,13 +270,13 @@ export class TopupNequiService {
           notify: 'E',
           updated_at: date
         }
-        const updateMovimiento = await this.movimientoscol.preload({
+        const updateMovimiento = await this.movementscol.preload({
           uid:searchMov.uid,
         ...Update
       });
-      const saveMovimiento = await this.movimientoscol.save(updateMovimiento);
+      const saveMovimiento = await this.movementscol.save(updateMovimiento);
       console.log(saveMovimiento)
-        const ActMov = await this.movimientoscol.save(Update)
+        const ActMov = await this.movementscol.save(Update)
          const requestBody = ({
           reference: searchMov.reference,
           status: 'success',
@@ -326,7 +326,7 @@ export class TopupNequiService {
           console.log(arrResp.error);
   
         } else {
-          const searchMov = await this.movimientoscol.findOneBy({uid:Number(element.uid)})
+          const searchMov = await this.movementscol.findOneBy({uid:Number(element.uid)})
           const Update = {
             status: 3,
             cost: cost,
@@ -335,11 +335,11 @@ export class TopupNequiService {
             updated_at: date
           }
   
-          const updateMovimiento = await this.movimientoscol.preload({
+          const updateMovimiento = await this.movementscol.preload({
             uid:searchMov.uid,
           ...Update
         });
-          const ActMov = await this.movimientoscol.save(updateMovimiento)
+          const ActMov = await this.movementscol.save(updateMovimiento)
           const searchmerchant = await this.aliados.findOneBy({ uid: searchMov.merchant_id})
           if (arrResp.error == 'REFERENCE_INVALID' || arrResp.error == 'INVALID_DATA' || arrResp.error == 'INCOMPLETE_DATA') {
             
@@ -419,7 +419,7 @@ export class TopupNequiService {
 
 
 
-    const movimientos = await this.movimientoscol
+    const movimientos = await this.movementscol
       .createQueryBuilder()
       .select([
         'n.reference',

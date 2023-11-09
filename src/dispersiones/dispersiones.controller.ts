@@ -19,7 +19,7 @@ export class DispersionesController {
 
 
   @UseGuards(AuthGuard)
-  @Get('verdispersion/:country')
+  @Get('seedispersion/:country')
   verdispersion(@Body() createDispersioneDto: CreateDispersioneDto,@Request() req, @Param('country') country: string) {
     return this.dispersionesService.verdispersion(req.user,country);
   }

@@ -14,11 +14,11 @@ import { MovimientosUser } from 'src/movimientos_user/entities/movimientos_user.
 export class PayinService {
   constructor(
     @InjectRepository(MovimientosColombia)
-    private movimientoscol: Repository<MovimientosColombia>,
+    private movementscol: Repository<MovimientosColombia>,
     @InjectRepository(Masiva)
-    private masiva: Repository<Masiva>,
-    @InjectRepository(MovimientosPeru) private MovimientosRepositoryper: Repository<MovimientosPeru>,
-    @InjectRepository(MovimientosMexico) private MovimientosRepositorymxt: Repository<MovimientosMexico>,
+    private masive: Repository<Masiva>,
+    @InjectRepository(MovimientosPeru) private movementsper: Repository<MovimientosPeru>,
+    @InjectRepository(MovimientosMexico) private movementsmx: Repository<MovimientosMexico>,
     @InjectRepository(Merchant)
     private aliados: Repository<Merchant>,
     @InjectRepository(MovimientosUser)
@@ -34,9 +34,9 @@ export class PayinService {
     const { log_tipo, merchantid } = response
 
     const selectedRepository =
-      country === 'PEN' ? this.MovimientosRepositoryper :
-        country === 'MXT' ? this.MovimientosRepositorymxt :
-          this.movimientoscol
+      country === 'PEN' ? this.movementsper :
+        country === 'MXT' ? this.movementsmx :
+          this.movementscol
 
 
           const queryBuilder = selectedRepository

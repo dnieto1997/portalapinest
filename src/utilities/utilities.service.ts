@@ -12,12 +12,12 @@ import { MovimientosMexico } from 'src/movimientos_mexico/entities/movimientos_m
 export class UtilitiesService {
   constructor(
     @InjectRepository(MovimientosColombia) 
-    private MovimientosRepository: Repository<MovimientosColombia>,
+    private movementscol: Repository<MovimientosColombia>,
 
     @InjectRepository(MovimientosPeru) 
-    private MovimientosRepositoryper: Repository<MovimientosPeru>,
+    private movementscolper: Repository<MovimientosPeru>,
     @InjectRepository(MovimientosMexico) 
-    private MovimientosRepositorymxt: Repository<MovimientosMexico>,
+    private movementscolmxt: Repository<MovimientosMexico>,
     
 ){}
  
@@ -30,9 +30,9 @@ async utilities(createUtilidad: CreateUtiliesDto,response,country) {
 
 
 const selectedRepository =
-country === 'PEN' ? this.MovimientosRepositoryper :
-country === 'MXT' ? this.MovimientosRepositorymxt :
-this.MovimientosRepository
+country === 'PEN' ? this.movementscolper :
+country === 'MXT' ? this.movementscolmxt :
+this.movementscol
 
 
  const query= selectedRepository.createQueryBuilder('movimiento')

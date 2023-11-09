@@ -28,16 +28,16 @@ export class TopupNequiController {
 
 
   @UseGuards(AuthGuard)
-  @Patch('recargar/:uid')
-  recargar(@Request() req,@Param('uid') uid: string) {
-    return this.topupNequiService.recargar(uid,req.user);
+  @Patch('recharge/:uid')
+  recharge(@Request() req,@Param('uid') uid: string) {
+    return this.topupNequiService.recharge(uid,req.user);
   }
 
 
   @UseGuards(AuthGuard)
-  @Patch('recargartodo')
-  recargartodo(@Body() array: ArrayTopup,@Request() req) {
-    return this.topupNequiService.recargartodo(array,req.user);
+  @Patch('rechargeall')
+  rechargeall(@Body() array: ArrayTopup,@Request() req) {
+    return this.topupNequiService.rechargeall(array,req.user);
   }
 
   

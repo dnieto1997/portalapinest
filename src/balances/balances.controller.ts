@@ -21,7 +21,7 @@ export class BalancesController {
 
 
   @UseGuards(AuthGuard)
-  @Get('buscar/:country')
+  @Get('search/:country')
   @ApiCreatedResponse({description:'the record has beed successfully created'})
   @ApiForbiddenResponse({description:'forbidden'})
   search(@Body() createBalanceDto: CreateBalanceDto,@Request() req, @Param('country') country: string) {

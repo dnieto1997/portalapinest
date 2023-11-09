@@ -24,34 +24,34 @@ export class PayoutService {
 
   constructor(
     @InjectRepository(MovimientosColombia)
-    private movimientoscol: Repository<MovimientosColombia>,
+    private movementscol: Repository<MovimientosColombia>,
     @InjectRepository(Masiva)
-    private masiva: Repository<Masiva>,
-    @InjectRepository(MovimientosPeru) private MovimientosRepositoryper: Repository<MovimientosPeru>,
-    @InjectRepository(MovimientosMexico) private MovimientosRepositorymxt: Repository<MovimientosMexico>,
+    private masive: Repository<Masiva>,
+    @InjectRepository(MovimientosPeru) private movementsper: Repository<MovimientosPeru>,
+    @InjectRepository(MovimientosMexico) private movementsmx: Repository<MovimientosMexico>,
     @InjectRepository(Merchant)
-    private aliados: Repository<Merchant>,
+    private merchants: Repository<Merchant>,
     @InjectRepository(Comparar)
-    private comparar: Repository<Comparar>,
+    private compare: Repository<Comparar>,
     @InjectRepository(MovimientosUser)
     private movements_user: Repository<MovimientosUser>,
     private readonly callbackService: CallbackService
     
   ) { }
-  async importar(array: ArrayPayout, response, country) {
+  async import(array: ArrayPayout, response, country) {
 
     if (array == undefined) {
       return response.json({
-        msg: 'Seleccione un archivo xlxs',
+        msg: 'Select an xlxs file',
         alert2: 2
       });
     }
 
 
     const selectedRepository =
-      country === 'PEN' ? this.MovimientosRepositoryper :
-        country === 'MXT' ? this.MovimientosRepositorymxt :
-          this.movimientoscol
+      country === 'PEN' ? this.movementsper :
+        country === 'MXT' ? this.movementsmx :
+          this.movementscol
 
 
     const { id: user } = response
@@ -82,22 +82,22 @@ export class PayoutService {
 
 
 
-    const resultado = results.map((mv) => {
-      const repetido = array.array.find((rp) => rp.reference === mv.movimiento_reference);
+    const result = results.map((mv) => {
+   const repeated = array.array.find((rp) => rp.reference === mv.movimiento_reference);
 
 
       return {
         reference: mv.movimiento_reference,
-        status: String(repetido.status),
+        status: String(repeated.status),
         usuario: user,
         fecha: date,
         cost: String(mv.costo),
         iva: String(mv.aliado_iva),
         url_response: mv.aliado_url_response,
-        motivo: repetido.motivo,
+        motivo: repeated.motivo,
         currency: mv.movimiento_currency,
         amount: mv.movimiento_amount,
-        provider: repetido.provider,
+        provider: repeated.provider,
         mov_update: false,
         uid: mv.movimiento_uid
 
@@ -108,10 +108,10 @@ export class PayoutService {
 
 
 
-    const saveUser = await this.masiva.save(resultado);
+    const saveUser = await this.masive.save(result);
 
     return ({
-      msg: 'Importacion exitosa',
+      msg: 'Successful import',
       arr: array.array.length,
       alert2: 1
     });
@@ -123,19 +123,19 @@ export class PayoutService {
 
 
 
-  async cambiarestado(response, country) {
+  async changestatus(response, country) {
 
     let respuesta = 0;
-    const masiva2 = await this.masiva.findBy({ msg: 1 })
+    const masive2 = await this.masive.findBy({ msg: 1 })
 
-    for (const masiva of masiva2) {
+    for (const masiva of masive2) {
       if (masiva.status === '1' || masiva.status === '3') {
         respuesta++;
 
         const selectedRepository =
-          country === 'PEN' ? this.MovimientosRepositoryper :
-            country === 'MXT' ? this.MovimientosRepositorymxt :
-              this.movimientoscol
+          country === 'PEN' ? this.movementsper :
+            country === 'MXT' ? this.movementsmx :
+              this.movementscol
 
 
         const updateData = {
@@ -156,17 +156,17 @@ export class PayoutService {
           mov_update: true
         };
 
-        const updateUser2 = await this.masiva.preload({
+        const updateUser2 = await this.masive.preload({
           uid: masiva.uid,
           ...updateData3
         });
-        await this.masiva.save(updateUser2);
+        await this.masive.save(updateUser2);
 
 
       }
 
       return ({
-        msg: 'Importacion exitosa',
+        msg: 'Successful import',
         result: respuesta,
         alert2: 1
       });
@@ -178,11 +178,11 @@ export class PayoutService {
   }
 
 
-  async notificartodo(array: ArrayPayout2, response: any, country: any) {
+  async notifyall(array: ArrayPayout2, response: any, country: any) {
     const selectedRepository =
-      country === 'PEN' ? this.MovimientosRepositoryper :
-        country === 'MXT' ? this.MovimientosRepositorymxt :
-          this.movimientoscol
+      country === 'PEN' ? this.movementsper :
+        country === 'MXT' ? this.movementsmx :
+          this.movementscol
 
     let respuesta = 0;
     for (const num of array.array) {
@@ -191,11 +191,11 @@ export class PayoutService {
         msg: 2
       };
 
-      const updateUser = await this.masiva.preload({
+      const updateUser = await this.masive.preload({
         reference: num.reference,
         ...updateData2
       });
-      await this.masiva.save(updateUser);
+      await this.masive.save(updateUser);
 
 
       let statusL = '';
@@ -237,11 +237,11 @@ export class PayoutService {
 
 
     const selectedRepository =
-      country === 'PEN' ? this.MovimientosRepositoryper :
-        country === 'MXT' ? this.MovimientosRepositorymxt :
-          this.movimientoscol
+      country === 'PEN' ? this.movementsper :
+        country === 'MXT' ? this.movementsmx :
+          this.movementscol
 
-    const { fechainicio, fechafin, status, aliado } = successpayout
+    const { initialdate, finaldate, status, aliado } = successpayout
 
 
 
@@ -268,8 +268,8 @@ export class PayoutService {
       .leftJoin(Masiva, 'masiva', 'movimientos.reference = masiva.reference')
       .where('movimientos.type_transaction = :typeTransaction', { typeTransaction: 2 })
       .andWhere('DATE(movimientos.updated_at) BETWEEN :fecha1 AND :fecha2', {
-        fecha1: fechainicio,
-        fecha2: fechafin,
+        fecha1: initialdate,
+        fecha2: finaldate,
       })
       .andWhere('movimientos.status IN (:statuses)', sqlstatus);
 
@@ -286,17 +286,15 @@ export class PayoutService {
 
   }
 
-
-
   async tablepayout(createPayoutDto: CreatePayoutDto, response, country) {
 
-    const { fechainicio, fechafin, aliado, user } = createPayoutDto
+    const { initialdate, finaldate, aliado, user } = createPayoutDto
     const { log_tipo, merchantid,id } = response
 
     const selectedRepository =
-      country === 'PEN' ? this.MovimientosRepositoryper :
-        country === 'MXT' ? this.MovimientosRepositorymxt :
-          this.movimientoscol
+      country === 'PEN' ? this.movementsper :
+        country === 'MXT' ? this.movementsmx :
+          this.movementscol
 
 
 
@@ -335,7 +333,7 @@ export class PayoutService {
       ])
       .leftJoin(Masiva, 'masiva', 'masiva.reference = movimiento.reference')
       .where('movimiento.type_transaction = :type_transaction', { type_transaction: 2 })
-      .andWhere('DATE(movimiento.created_at) BETWEEN :fechainicio AND :fechafin', { fechainicio, fechafin })
+      .andWhere('DATE(movimiento.created_at) BETWEEN :initialdate AND :finaldate', { initialdate, finaldate })
       .groupBy('movimiento.uid, masiva.reference, masiva.motivo,masiva.id')
       .orderBy('movimiento.uid', 'DESC');
 
@@ -344,7 +342,7 @@ export class PayoutService {
     }
 
     if (aliado) {
-      queryBuilder.andWhere('movimiento.merchant_id = :aliado', { aliado: merchantid });
+      queryBuilder.andWhere('movimiento.merchant_id = :merchant', { merchant: merchantid });
     }
 
     if (log_tipo === 'TE') {
@@ -362,7 +360,7 @@ export class PayoutService {
 
   async tablepayoutperu(createPayoutDto: SuccessPayout, response, country) {
 
-    const { fechainicio, fechafin, status } = createPayoutDto
+    const { initialdate, finaldate, status } = createPayoutDto
     const { log_tipo, merchantid } = response
 
 
@@ -370,9 +368,9 @@ export class PayoutService {
 
 
     const selectedRepository =
-      country === 'PEN' ? this.MovimientosRepositoryper :
-        country === 'MXT' ? this.MovimientosRepositorymxt :
-          this.movimientoscol
+      country === 'PEN' ? this.movementsper :
+        country === 'MXT' ? this.movementsmx :
+          this.movementscol
 
 
 
@@ -406,7 +404,7 @@ export class PayoutService {
      END AS estado`,
         `CONCAT("https://productionperu.toppaylatam.com/public/asset/consignaciones/", m.uid, ".jpg?nocache=${date}") AS url`,
       ])
-      .where(`DATE(m.created_at) BETWEEN '${fechainicio}' AND '${fechafin}'`);
+      .where(`DATE(m.created_at) BETWEEN '${initialdate}' AND '${finaldate}'`);
 
 
 
@@ -430,24 +428,24 @@ export class PayoutService {
 
   async update(id: number, updatePayoutDto: UpdatePayoutDto, country) {
     const selectedRepository =
-      country === 'PEN' ? this.MovimientosRepositoryper :
-        country === 'MXT' ? this.MovimientosRepositorymxt :
-          this.movimientoscol
+      country === 'PEN' ? this.movementsper :
+        country === 'MXT' ? this.movementsmx :
+          this.movementscol
 
     const movimientoB = await selectedRepository.findOneBy({ uid: id });
 
-    const aliados1 = await this.aliados.findOneBy({ uid: movimientoB.merchant_id });
+    const merchants1 = await this.merchants.findOneBy({ uid: movimientoB.merchant_id });
 
 
-    if (!aliados1) {
-      throw new HttpException('Usuario no existe', HttpStatus.CONFLICT);
+    if (!merchants1) {
+      throw new HttpException('User does not exist', HttpStatus.CONFLICT);
     }
 
 
     const updateData = {
       status: 1,
-      cost: aliados1.cashout,
-      iva: aliados1.cashout * aliados1.iva,
+      cost: merchants1.cashout,
+      iva: merchants1.cashout * merchants1.iva,
       notify: 'E',
     };
 
@@ -465,9 +463,9 @@ export class PayoutService {
       amount: movimientoB.amount,
       currency: movimientoB.currency,
       referenceid: movimientoB.uid,
-      url: aliados1.url_response,
-      name:aliados1.merchant,
-      uid:aliados1.uid,
+      url: merchants1.url_response,
+      name:merchants1.merchant,
+      uid:merchants1.uid,
       type: movimientoB.type_transaction,
       user: id
     });
@@ -478,15 +476,15 @@ export class PayoutService {
 
 
 
-    const llamar = this.callbackService.Callback(requestBody)
+    const call = this.callbackService.Callback(requestBody)
 
 
-  if (llamar) {
+  if (call) {
 
-      return { message: ` Cambiado exitosamente`, status: 1 }
+      return { message: ` Successfully changed`, status: 1 }
     } else {
       return {
-        message: { result: `Error al cambiar el estado` },
+        message: { result: `Error changing state` },
         status: 1,
       };
     }
@@ -494,15 +492,15 @@ export class PayoutService {
 
   }
 
-  async rechazar(id: number, updatePayoutDto: UpdatePayoutDto, country, response) {
+  async declined(id: number, updatePayoutDto: UpdatePayoutDto, country, response) {
     const date = dateact
     const { motivo } = updatePayoutDto
     const { id: user } = response
-    const selectedRepository =country === 'PEN' ? this.MovimientosRepositoryper :country === 'MXT' ? this.MovimientosRepositorymxt :this.movimientoscol
+    const selectedRepository =country === 'PEN' ? this.movementsper :country === 'MXT' ? this.movementsmx :this.movementscol
     const movimientoB = await selectedRepository.findOneBy({ uid: id });
-    const aliados1 = await this.aliados.findOneBy({ uid: movimientoB.merchant_id });
-    if (!aliados1) {
-      throw new HttpException('Usuario no existe', HttpStatus.CONFLICT);
+    const merchants1 = await this.merchants.findOneBy({ uid: movimientoB.merchant_id });
+    if (!merchants1) {
+      throw new HttpException('User does not exist', HttpStatus.CONFLICT);
     }
     const dataMasiva = {
       reference: movimientoB.reference,
@@ -510,18 +508,18 @@ export class PayoutService {
       usuario: user,
       fecha: date,
       amount:movimientoB.amount,
-      url_response: aliados1.url_response,
-      cost: String(aliados1.cashout),
-      iva: String(aliados1.cashout * aliados1.iva),
+      url_response: merchants1.url_response,
+      cost: String(merchants1.cashout),
+      iva: String(merchants1.cashout * merchants1.iva),
       currency: country,
       motivo: motivo,
       uid:movimientoB.uid
     }
-    const saveUser = await this.masiva.save(dataMasiva);
+    const saveUser = await this.masive.save(dataMasiva);
     const updateData = {
       status: 3,
-      cost: aliados1.cashout,
-      iva: aliados1.cashout * aliados1.iva,
+      cost: merchants1.cashout,
+      iva: merchants1.cashout * merchants1.iva,
       notify: 'E',
     };
     const updateUser = await selectedRepository.preload({
@@ -536,29 +534,29 @@ export class PayoutService {
       amount: movimientoB.amount,
       currency: movimientoB.currency,
       referenceid: movimientoB.uid,
-      url: aliados1.url_response,
+      url: merchants1.url_response,
       motivo: motivo,
-      name:aliados1.merchant,
-      uid:aliados1.uid,
+      name:merchants1.merchant,
+      uid:merchants1.uid,
       type: movimientoB.type_transaction,
       user: user
     };
-    const llamar = await this.callbackService.CallbackPayout(requestBody)
+    const call = await this.callbackService.CallbackPayout(requestBody)
 
     
-   if (llamar) {
+   if (call) {
 
-      return { message: ` Cambiado exitosamente`, status: 1 }
+      return { message: ` Successfully changed`, status: 1 }
     } else {
       return {
-        message: { result: `Error al cambiar el estado` },
+        message: { result: `Error changing state` },
         status: 1,
       };
     } 
   }
 
   async filter(filter: filterPayout, response: any, country: any) {
-    const selectedRepository =country === 'PEN' ? this.MovimientosRepositoryper :country === 'MXT' ? this.MovimientosRepositorymxt :this.movimientoscol
+    const selectedRepository =country === 'PEN' ? this.movementsper :country === 'MXT' ? this.movementsmx :this.movementscol
     const { uid, document, reference } = filter
     let sqlstatus = " "
 
@@ -573,7 +571,7 @@ export class PayoutService {
       return {
         result: [],
         alert2: 1,
-        msg: 'Seleccione una referencia / cedula / ID',
+        msg: 'Select a reference / Num Doc / ID',
       };
     }
     const query = selectedRepository
@@ -598,7 +596,7 @@ export class PayoutService {
   }
 
 
-  async pagarperu(uid, payoutperu: PayoutPeru, country: any,response) {
+  async paymentperu(uid, payoutperu: PayoutPeru, country: any,response) {
  
 
     const date = dateact
@@ -606,19 +604,19 @@ export class PayoutService {
        const {reference,amount,method}=payoutperu
        const {id:user}=response
 
-       const selectedRepository = country ==='PEN' ? this.MovimientosRepositoryper :country === 'MXT' ? this.MovimientosRepositorymxt :this.movimientoscol
+       const selectedRepository = country ==='PEN' ? this.movementsper :country === 'MXT' ? this.movementsmx :this.movementscol
 
        const searchref= await selectedRepository.findBy({reference_pro2:reference})
 
 
        if(searchref.length!=0){
-        throw new HttpException('Esta referencia se encuentra registrada', HttpStatus.CONFLICT);
+        throw new HttpException('This reference is registered', HttpStatus.CONFLICT);
        } 
       
        const movements= await selectedRepository.findBy({uid:uid})
 
 
-        const merchant = await this.aliados.findBy({uid:movements[0].merchant_id})
+        const merchant = await this.merchants.findBy({uid:movements[0].merchant_id})
       
        for (const movements1 of movements) {
         
@@ -666,10 +664,10 @@ export class PayoutService {
 
       if (call) {
 
-        return { message: ` Cambiado exitosamente`, status: 1 }
+        return { message: ` Successfully changed`, status: 1 }
       } else {
         return {
-          message: { result: `Error al cambiar el estado` },
+          message: { result: `Error changing state` },
           status: 1,
         };
       }
@@ -683,32 +681,32 @@ export class PayoutService {
 
   }
 
-  async motivo(filter: filterPayout, response: any, country: any) {
-    const selectedRepository =country === 'PEN' ? this.MovimientosRepositoryper :country === 'MXT' ? this.MovimientosRepositorymxt :this.movimientoscol
+  async reason(filter: filterPayout, response: any, country: any) {
+  
     const { reference } = filter
-    const masiva = await this.masiva.findOneBy({ reference: reference })
+    const masiva = await this.masive.findOneBy({ reference: reference })
     if (masiva == null) {
-      throw new HttpException('No hay motivo con esta referencia', HttpStatus.CONFLICT);
+      throw new HttpException('There is no reason with this reference', HttpStatus.CONFLICT);
     }
     return masiva
   }
 
-  async pagos(array: ArrayComparar, response, country) {
-    const selectedRepository= country === 'PEN' ? this.MovimientosRepositoryper :country === 'MXT' ? this.MovimientosRepositorymxt :this.movimientoscol
+  async payment(array: ArrayComparar, response, country) {
+    const selectedRepository= country === 'PEN' ? this.movementsper :country === 'MXT' ? this.movementsmx :this.movementscol
     
   const {reference}=array
 
      if(reference.length==0){
       return ({
         result: [],
-        msg: 'Seleccione un documento',
+        msg: 'Select a document',
         alert2: 1
     });
      }
 
-     const trun= await this.comparar.query('TRUNCATE TABLE comparar');
+     const trun= await this.compare.query('TRUNCATE TABLE comparar');
      const referencesToSave = reference.map(ref => ({ reference: ref }));
-     const savedReferences = await this.comparar.save(referencesToSave);
+     const savedReferences = await this.compare.save(referencesToSave);
      const results = await selectedRepository
      .createQueryBuilder('m')
      .select([
@@ -730,7 +728,7 @@ export class PayoutService {
 
   }
 
-  async rechazarperu(uid, updatePayoutDto: UpdatePayoutDto, country: any,response) {
+  async declinedperu(uid, updatePayoutDto: UpdatePayoutDto, country: any,response) {
  
 
     const date = dateact
@@ -738,12 +736,12 @@ export class PayoutService {
        const {motivo}=updatePayoutDto
        const {id:user}=response
 
-       const selectedRepository = country ==='PEN' ? this.MovimientosRepositoryper :country === 'MXT' ? this.MovimientosRepositorymxt :this.movimientoscol
+       const selectedRepository = country ==='PEN' ? this.movementsper :country === 'MXT' ? this.movementsmx :this.movementscol
 
        const movements= await selectedRepository.findBy({uid:uid})
 
 
-        const merchant = await this.aliados.findBy({uid:movements[0].merchant_id})
+        const merchant = await this.merchants.findBy({uid:movements[0].merchant_id})
       
        for (const movements1 of movements) {
         
@@ -786,10 +784,10 @@ export class PayoutService {
 
       if (call) {
 
-        return { message: ` Cambiado exitosamente`, status: 1 }
+        return { message: ` Successfully changed`, status: 1 }
       } else {
         return {
-          message: { result: `Error al cambiar el estado` },
+          message: { result: `Error changing state` },
           status: 1,
         };
       }

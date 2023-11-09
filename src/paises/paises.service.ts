@@ -9,11 +9,11 @@ import { Repository } from 'typeorm';
 export class PaisesService {
 
   constructor(
-    @InjectRepository(Paise) private paises:Repository<Paise>,
+    @InjectRepository(Paise) private country:Repository<Paise>,
   ){}
   async create(createPaiseDto: CreatePaiseDto) {
-    const newUser = this.paises.create(createPaiseDto);
-    const saveUser =  await this.paises.save(newUser);
+    const newUser = this.country.create(createPaiseDto);
+    const saveUser =  await this.country.save(newUser);
 
     return saveUser
   }

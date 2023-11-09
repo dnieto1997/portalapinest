@@ -29,6 +29,7 @@ import { BlacklistModule } from './blacklist/blacklist.module';
 import { ChangepasswordModule } from './changepassword/changepassword.module';
 import { PaymentlinkModule } from './paymentlink/paymentlink.module';
 import { ConfigModule } from './config/config.module';
+import { TypeUserModule } from './type_user/type_user.module';
 
 @Module({
   imports: [
@@ -72,6 +73,7 @@ import { ConfigModule } from './config/config.module';
     ChangepasswordModule,
     PaymentlinkModule,
     ConfigModule,
+    TypeUserModule,
   ],
   controllers: [],
   providers: [],

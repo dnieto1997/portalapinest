@@ -3,8 +3,8 @@ import { PaisesService } from './paises.service';
 import { CreatePaiseDto } from './dto/create-paise.dto';
 import { UpdatePaiseDto } from './dto/update-paise.dto';
 import { ApiTags } from '@nestjs/swagger';
-@ApiTags('paises')
-@Controller('paises')
+@ApiTags('country')
+@Controller('country')
 export class PaisesController {
   constructor(private readonly paisesService: PaisesService) {}
 

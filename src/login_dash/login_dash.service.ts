@@ -19,7 +19,7 @@ export class LoginDashService {
     const existUser = await this.logiDashRepository.findOneBy({log_usuario});
 
     if(existUser){
-      throw new HttpException('usuario existe', HttpStatus.CONFLICT);
+      throw new HttpException('User does not exist', HttpStatus.CONFLICT);
     }
 
     const newUser = this.logiDashRepository.create(createLoginDashDto);
@@ -45,7 +45,7 @@ export class LoginDashService {
     const existUser = await this.logiDashRepository.findOneBy({log_id:id});
 
     if(!existUser){
-      throw new HttpException('Usuario no existe', HttpStatus.CONFLICT);
+      throw new HttpException('User does not exist', HttpStatus.CONFLICT);
     }
 
     return existUser;
@@ -57,7 +57,7 @@ export class LoginDashService {
     const existUser = await this.logiDashRepository.findOneBy({log_id:id});
 
     if(!existUser){
-      throw new HttpException('Usuario no existe', HttpStatus.CONFLICT);
+      throw new HttpException('User does not exist', HttpStatus.CONFLICT);
     }
 
     const updateUser = await this.logiDashRepository.preload({
@@ -74,19 +74,19 @@ export class LoginDashService {
     const existUser = await this.logiDashRepository.findOneBy({log_id:id});
 
     if(!existUser){
-      throw new HttpException('Usuario no existe', HttpStatus.CONFLICT);
+      throw new HttpException('User does not exist', HttpStatus.CONFLICT);
     }
 
-    let estado = '1';
+    let status = '1';
 
     if(existUser.log_estado == '1'){
-      estado ='2';
+      status ='2';
     }else{
-      estado ='1';
+      status ='1';
     }
     const updateUser = await this.logiDashRepository.preload({
       log_id:id,
-      log_estado: estado
+      log_estado: status
     });
 
     return await this.logiDashRepository.save(updateUser);

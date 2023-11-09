@@ -10,12 +10,7 @@ import { jwtConstants } from 'src/auth/jwt.constants';
   controllers: [PaisesController],
   providers: [PaisesService],
   imports:[ 
-    TypeOrmModule.forFeature([Paise]),
-    JwtModule.register({
-      global: true,
-      secret: jwtConstants.secret,
-      signOptions: {  },
-    }),
+    TypeOrmModule.forFeature([Paise])
   ],
   exports: [
     PaisesService

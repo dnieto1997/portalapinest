@@ -4,8 +4,8 @@ import { CreateMovimientosPeruDto } from './dto/create-movimientos_peru.dto';
 import { UpdateMovimientosPeruDto } from './dto/update-movimientos_peru.dto';
 import { AuthGuard } from '../auth/jwt.guard';
 import { ApiCreatedResponse, ApiForbiddenResponse, ApiTags } from '@nestjs/swagger';
-@ApiTags('movimientos-peru')
-@Controller('movimientos-peru')
+@ApiTags('movements-peru')
+@Controller('movements-peru')
 export class MovimientosPeruController {
   constructor(private readonly movimientosPeruService: MovimientosPeruService) {}
 

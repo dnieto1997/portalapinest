@@ -19,22 +19,22 @@ export class PayoutController {
    {}
 
   @UseGuards(AuthGuard)
-  @Post('importar/:country')
-  importar(@Body() array: ArrayPayout,@Request() req,@Param('country') country: string) {
-    return this.payoutService.importar(array,req.user,country);
+  @Post('import/:country')
+  import(@Body() array: ArrayPayout,@Request() req,@Param('country') country: string) {
+    return this.payoutService.import(array,req.user,country);
   }
 
 
   @UseGuards(AuthGuard)
-  @Post('cambiarestado/:country')
-  cambiarestado(@Request() req,@Param('country') country: string) {
-    return this.payoutService.cambiarestado(req.user,country);
+  @Post('changestatus/:country')
+  changestatus(@Request() req,@Param('country') country: string) {
+    return this.payoutService.changestatus(req.user,country);
   }
 
   @UseGuards(AuthGuard)
-  @Post('notificartodo/:country')
-  notificartodo(@Body() array: ArrayPayout2,@Request() req,@Param('country') country: string) {
-    return this.payoutService.notificartodo(array,req.user,country);
+  @Post('notifyall/:country')
+  notifyall(@Body() array: ArrayPayout2,@Request() req,@Param('country') country: string) {
+    return this.payoutService.notifyall(array,req.user,country);
   }
 
 
@@ -62,16 +62,16 @@ export class PayoutController {
 
     
   @UseGuards(AuthGuard)
-  @Get('motivo')
-  verMotivo(@Body() filter: filterPayout,@Request() req,@Param('country') country: string) {
-    return this.payoutService.motivo(filter,req.user,country);
+  @Get('reason')
+  seereason(@Body() filter: filterPayout,@Request() req,@Param('country') country: string) {
+    return this.payoutService.reason(filter,req.user,country);
   }
 
 
   @UseGuards(AuthGuard)
-  @Patch('pagos/:country')
-  pagos(@Body() filter: ArrayComparar,@Request() req,@Param('country') country: string) {
-    return this.payoutService.pagos(filter,req.user,country);
+  @Patch('payments/:country')
+  payment(@Body() filter: ArrayComparar,@Request() req,@Param('country') country: string) {
+    return this.payoutService.payment(filter,req.user,country);
   }
 
   @UseGuards(AuthGuard)
@@ -81,28 +81,28 @@ export class PayoutController {
   }
 
   @UseGuards(AuthGuard)
-  @Patch('pagarperu/:country/:uid')
-  pagarperu(@Param('uid') uid: number, @Body() PayoutPeru: PayoutPeru,@Param('country') country: string,@Request() req) {
-    return this.payoutService.pagarperu(uid, PayoutPeru,country,req.user);
+  @Patch('paymentsperu/:country/:uid')
+  paymentperu(@Param('uid') uid: number, @Body() PayoutPeru: PayoutPeru,@Param('country') country: string,@Request() req) {
+    return this.payoutService.paymentperu(uid, PayoutPeru,country,req.user);
   }
 
   @UseGuards(AuthGuard)
-  @Patch('pagar/:country/:id')
+  @Patch('payments/:country/:id')
   update(@Param('id') id: string, @Body() updatePayoutDto: UpdatePayoutDto,@Param('country') country: string) {
     return this.payoutService.update(+id, updatePayoutDto,country);
   }
 
   @UseGuards(AuthGuard)
-  @Patch('rechazar/:country/:id')
-  rechazar(@Param('id') id: string, @Body() updatePayoutDto: UpdatePayoutDto,@Param('country') country: string,@Request() req) {
-    return this.payoutService.rechazar(+id, updatePayoutDto,country,req.user);
+  @Patch('declined/:country/:id')
+  declined(@Param('id') id: string, @Body() updatePayoutDto: UpdatePayoutDto,@Param('country') country: string,@Request() req) {
+    return this.payoutService.declined(+id, updatePayoutDto,country,req.user);
   }
 
 
   @UseGuards(AuthGuard)
-  @Patch('rechazarperu/:country/:id')
-  rechazarperu(@Param('id') id: string, @Body() updatePayoutDto: UpdatePayoutDto,@Param('country') country: string,@Request() req) {
-    return this.payoutService.rechazarperu(+id, updatePayoutDto,country,req.user);
+  @Patch('declinedperu/:country/:id')
+  declinedperu(@Param('id') id: string, @Body() updatePayoutDto: UpdatePayoutDto,@Param('country') country: string,@Request() req) {
+    return this.payoutService.declinedperu(+id, updatePayoutDto,country,req.user);
   }
 
 

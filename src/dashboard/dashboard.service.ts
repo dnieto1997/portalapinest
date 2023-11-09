@@ -13,8 +13,8 @@ import { LoginDash } from 'src/login_dash/entities/login_dash.entity';
 export class DashboardService {
   constructor(
     @InjectRepository(MovimientosColombia) private movementscol: Repository<MovimientosColombia>,
-    @InjectRepository(MovimientosPeru) private movementsRepositoryper: Repository<MovimientosPeru>,
-    @InjectRepository(MovimientosMexico) private movementsRepositorymxt: Repository<MovimientosMexico>,
+    @InjectRepository(MovimientosPeru) private movementsper: Repository<MovimientosPeru>,
+    @InjectRepository(MovimientosMexico) private movementsmx: Repository<MovimientosMexico>,
     @InjectRepository(LoginDash) private login: Repository<LoginDash>,
 
   ) { }
@@ -34,8 +34,8 @@ export class DashboardService {
     const date = onlyDate.toISOString().split('T')[0];
 
    const selectedRepository =
-   country === 'PEN' ? this.movementsRepositoryper :
-   country === 'MXT' ? this.movementsRepositorymxt :
+   country === 'PEN' ? this.movementsper :
+   country === 'MXT' ? this.movementsmx :
     this.movementscol
 
 
@@ -93,8 +93,8 @@ export class DashboardService {
     
     
     const selectedRepository =
-    country === 'PEN' ? this.movementsRepositoryper :
-    country === 'MXT' ? this.movementsRepositorymxt :
+    country === 'PEN' ? this.movementsper :
+    country === 'MXT' ? this.movementsmx :
      this.movementscol
 
     
@@ -130,8 +130,8 @@ export class DashboardService {
     const { log_tipo, merchantid } = response
     
     const selectedRepository =
-    country === 'PEN' ? this.movementsRepositoryper :
-    country === 'MXT' ? this.movementsRepositorymxt :
+    country === 'PEN' ? this.movementsper :
+    country === 'MXT' ? this.movementsmx :
      this.movementscol
     
     const query =  selectedRepository

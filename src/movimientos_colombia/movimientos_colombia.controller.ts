@@ -9,8 +9,8 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Merchant } from 'src/aliado/entities/merchant.entity';
 import { Repository } from 'typeorm';
 
-@ApiTags('movimientos-colombia')
-@Controller('movimientos-colombia')
+@ApiTags('movements-colombia')
+@Controller('movements-colombia')
 export class MovimientosColombiaController {
   constructor(private readonly movimientosColombiaService: MovimientosColombiaService,
     

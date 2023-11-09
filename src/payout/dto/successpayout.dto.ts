@@ -4,11 +4,11 @@ import { IsString, IsOptional,IsNotEmpty, IsNumber } from 'class-validator';
 export class SuccessPayout {
     @IsNotEmpty()
     @IsString()
-    fechainicio: string; 
+    initialdate: string; 
 
     @IsNotEmpty()
     @IsString()
-    fechafin: string;
+    finaldate: string;
 
     @IsOptional()
     @IsNumber()

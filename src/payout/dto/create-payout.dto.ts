@@ -4,11 +4,11 @@ export class CreatePayoutDto {
 
     @IsNotEmpty()
     @IsString()
-    fechainicio: string; 
+    initialdate: string; 
 
     @IsNotEmpty()
     @IsString()
-    fechafin: string;
+    finaldate: string;
 
     
     @IsOptional()
