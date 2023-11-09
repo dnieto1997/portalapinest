@@ -10,10 +10,7 @@ import { ApiTags } from '@nestjs/swagger';
 export class TypeUserController {
   constructor(private readonly typeUserService: TypeUserService) {}
 
-  @Post()
-  create(@Body() createTypeUserDto: CreateTypeUserDto) {
-    return this.typeUserService.create(createTypeUserDto);
-  }
+  
   
   @UseGuards(AuthGuard)
   @Get()
@@ -21,18 +18,5 @@ export class TypeUserController {
     return this.typeUserService.findAll();
   }
 
-  @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.typeUserService.findOne(+id);
-  }
-
-  @Patch(':id')
-  update(@Param('id') id: string, @Body() updateTypeUserDto: UpdateTypeUserDto) {
-    return this.typeUserService.update(+id, updateTypeUserDto);
-  }
-
-  @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.typeUserService.remove(+id);
-  }
+  
 }
