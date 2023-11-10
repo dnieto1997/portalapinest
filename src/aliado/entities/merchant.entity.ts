@@ -26,29 +26,29 @@ export class Merchant {
     @Column({ type: 'varchar', length: 300,default: null })
     url_response: string;
 
-    @Column({ type: 'decimal',  default: 450.00 })
+    @Column({ type: 'double',  default: 450 })
     pse_fijo: number;
 
-    @Column({ type: 'decimal',  default: 0.00 })
+    @Column({ type: 'double',  default: 0.80 })
     pse_porcentaje: number;
 
     
-    @Column({ type: 'decimal',  default: 450.00 })
+    @Column({ type: 'double',  default: 450.00 })
     nequi_fijo: number;
 
-    @Column({ type: 'decimal',  default: 0.80})
+    @Column({ type: 'double',  default: 0.80})
     nequi_porcentaje: number;
 
-    @Column({ type: 'decimal',  default: 0.00 })
+    @Column({ type: 'double',  default: 0.00 })
     cashout: number;
   
-    @Column({ type: 'decimal',  default: 20.00 })
+    @Column({ type: 'double',  default: 20.00 })
     wallet_cashin: number;
   
-    @Column({ type: 'decimal',  default: 0.00 })
+    @Column({ type: 'double',  default: 0.00 })
     wallet_cashout: number;
   
-    @Column({ type: 'decimal',  default: 0.19 })
+    @Column({ type: 'double',  default: 0.19 })
     iva: number;
   
     @Column({ type: 'int'})

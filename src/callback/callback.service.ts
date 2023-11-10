@@ -12,154 +12,131 @@ export class CallbackService {
     private logs_callback: Repository<LogsCallback>,
   ) { }
 
- Callback = async (array) => {
-       const date= dateact
-       console.log(array)
-    const requestBody = JSON.stringify({
-          
+Callback = async (array) => {
+
+  const date = dateact;
+  console.log(array);
+
+  const requestBody = JSON.stringify({
+    reference: array.reference,
+    status: array.status,
+    method: array.method,
+    amount: array.amount,
+    currency: array.currency,
+    referenceid: array.referenceid
+  });
+
+  const { url } = array;
+
+  const requestOptions: RequestInit = {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: requestBody,
+    redirect: 'follow',
+  };
+
+  try {
+    const response = await fetch(url, requestOptions);
+
+    console.error('Network error1:', response.status);
+
+  
+      const result = await response.text();
+
+      const newReferencia = {
         reference: array.reference,
+        referenceid: array.referenceid,
+        amount: array.amount,
+        date_notify: date,
+        currency: array.currency,
+        url_callback: url,
+        json: requestBody,
         status: array.status,
         method: array.method,
-        amount: array.amount,
-        currency: array.currency,
-        referenceid:array.referenceid
-      });
-  
-       const {url}=array
-
-         
-      const requestOptions: RequestInit = { 
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: requestBody,
-        redirect: 'follow',
+        resp_callback: result,
+        merchant_id: array.uid,
+        merchant_name: array.name,
+        type_transaction: array.type,
+        user_created: array.user
       };
 
-    
-      try {
-        const response = await fetch(url, requestOptions); 
-  
-        if (response.ok) {
-          const result = await response.text();
-              
-          const newReferencia =
-            {
-             reference:array.reference,
-             referenceid:array.referenceid,
-             amount:array.amount,
-             date_notify:date,
-             currency:array.currency,
-             url_callback:url,
-             json:requestBody,
-             status:array.status,
-             method:array.method,
-             resp_callback:result,
-             merchant_id: array.uid,
-             merchant_name: array.name,
-             type_transaction: array.type,
-             user_created: array.user
+      await this.logs_callback.save(newReferencia);
 
-            }
-        
+      return result;
+   
 
- 
+  } catch (error) {
+    console.error('Error:', error);
+   throw new Error('An error occurred while submitting the request.'); 
+  }
+};
 
-        await this.logs_callback.save(newReferencia);
-             
-       
-
-          return result;
-
-
-
-        } else {
-          console.error('Network error:', response.status, response.statusText);
-          throw new Error('An error occurred while submitting the request.');
-        }
-      } catch (error) {
-        console.error('Error:', error);
-        throw new Error('An error occurred while submitting the request.');
-      }
-    
-
-
- 
-}
 
 
 CallbackPayout = async (array) => {
-    
-    const date= dateact
-    const requestBody = JSON.stringify({
-       
+  const date = dateact;
+
+  // Verificar si motivo está vacío
+  const errorMsg = array.motivo.trim() !== '' ? array.motivo : undefined;
+
+  const requestBody = JSON.stringify({
+    reference: array.reference,
+    status: array.status,
+    method: array.method,
+    amount: array.amount,
+    currency: array.currency,
+    ...(errorMsg !== undefined && { errorMsg }) // Incluir errorMsg solo si no está indefinido
+  });
+
+  const { url } = array;
+  const requestOptions: RequestInit = {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: requestBody,
+    redirect: 'follow',
+  };
+
+  try {
+    const response = await fetch(url, requestOptions);
+
+    if (response.ok) {
+      const result = await response.text();
+
+      const newReferencia = {
         reference: array.reference,
-        status: array.status,
-        method: array.method,
+        referenceid: array.referenceid,
         amount: array.amount,
+        date_notify: date,
         currency: array.currency,
-        errorMsg:array.motivo
-      });
-  
-       const {url}=array
-      const requestOptions: RequestInit = { 
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: requestBody,
-        redirect: 'follow',
+        url_callback: url,
+        json: requestBody,
+        status: array.status,
+        motivo: array.motivo,
+        method: array.method,
+        resp_callback: result,
+        merchant_id: array.uid,
+        merchant_name: array.name,
+        type_transaction: array.type,
+        user_created: array.user
       };
 
-            try {
-        const response = await fetch(url, requestOptions); 
-  
-        if (response.ok) {
-          const result = await response.text();
-                
-          const newReferencia =
-            {
-             reference:array.reference,
-             referenceid:array.referenceid,
-             amount:array.amount,
-             date_notify:date,
-             currency:array.currency,
-             url_callback:url,
-             json:requestBody,
-             status:array.status,
-             motivo:array.motivo,
-             method:array.method,
-             resp_callback:result,
-             merchant_id: array.uid,
-             merchant_name: array.name,
-             type_transaction: array.type,
-             user_created: array.user
+      await this.logs_callback.save(newReferencia);
 
-            }
-        
-
- 
-
-        await this.logs_callback.save(newReferencia);
-       
-          
-          return result;
-
-
-
-        } else {
-          console.error('Network error:', response.status, response.statusText);
-          throw new Error('An error occurred while submitting the request.');
-        }
-      } catch (error) {
-        console.error('Error:', error);
-        throw new Error('An error occurred while submitting the request.');
-      }
-
-
-      
+      return result;
+    } else {
+      console.error('Network error:', response.status, response.statusText);
+      throw new Error('An error occurred while submitting the request.');
+    }
+  } catch (error) {
+    console.error('Error:', error);
+    throw new Error('An error occurred while submitting the request.');
+  }
 }
+
 
 CallbackPeru = async (array) => {
     
@@ -185,7 +162,7 @@ CallbackPeru = async (array) => {
     try {
       const response = await fetch(url, requestOptions); 
 
-      if (response.ok) {
+     
         const result = await response.text();
              
         const newReferencia =
@@ -216,10 +193,6 @@ CallbackPeru = async (array) => {
 
 
 
-      } else {
-        console.error('Network error:', response.status, response.statusText);
-        throw new Error('An error occurred while submitting the request..');
-      }
     } catch (error) {
       console.error('Error:', error);
       throw new Error('An error occurred while submitting the request..');
@@ -230,8 +203,6 @@ CallbackPeru = async (array) => {
 CallbackPeruDeclined = async (array) => {
     
     const date=dateact
-
-
 
 
 

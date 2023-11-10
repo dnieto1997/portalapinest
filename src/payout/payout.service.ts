@@ -124,112 +124,112 @@ export class PayoutService {
 
 
   async changestatus(response, country) {
-
     let respuesta = 0;
-    const masive2 = await this.masive.findBy({ msg: 1 })
-
-    for (const masiva of masive2) {
+    const masive2 = await this.masive.find({ where: { msg: 1, status: '1' } });
+  
+    const selectedRepository =
+      country === 'PEN' ? this.movementsper :
+      country === 'MXT' ? this.movementsmx :
+      this.movementscol;
+  
+    const updates = masive2.map(async (masiva) => {
       if (masiva.status === '1' || masiva.status === '3') {
         respuesta++;
-
-        const selectedRepository =
-          country === 'PEN' ? this.movementsper :
-            country === 'MXT' ? this.movementsmx :
-              this.movementscol
-
-
+  
         const updateData = {
           status: Number(masiva.status),
           notify: 'E',
           cost: Number(masiva.cost),
           iva: Number(masiva.cost) * Number(masiva.iva)
         };
-
+  
         const updateUser = await selectedRepository.preload({
           uid: masiva.uid,
           ...updateData
         });
+  
         await selectedRepository.save(updateUser);
-
-
-        const updateData3 = {
+  
+        const updateInfo = {
           mov_update: true
         };
-
-        const updateUser2 = await this.masive.preload({
-          uid: masiva.uid,
-          ...updateData3
-        });
-        await this.masive.save(updateUser2);
-
-
+  
+        await this.masive.update({ uid: masiva.uid }, updateInfo);
       }
-
-      return ({
-        msg: 'Successful import',
-        result: respuesta,
-        alert2: 1
-      });
-    }
-
-
-
-
+    });
+  
+    await Promise.all(updates);
+  
+    return {
+      msg: 'Successful import',
+      result: masive2.length,
+      alert2: 1
+    };
   }
+  
 
 
   async notifyall(array: ArrayPayout2, response: any, country: any) {
+
     const selectedRepository =
-      country === 'PEN' ? this.movementsper :
-        country === 'MXT' ? this.movementsmx :
-          this.movementscol
-
+    country === 'PEN' ? this.movementsper :
+    country === 'MXT' ? this.movementsmx :
+    this.movementscol;
     let respuesta = 0;
+    const updates = [];
+  
     for (const num of array.array) {
-
       const updateData2 = {
         msg: 2
       };
-
-      const updateUser = await this.masive.preload({
-        reference: num.reference,
-        ...updateData2
-      });
-      await this.masive.save(updateUser);
-
-
+       
+   
+  
+      await this.masive.update({ reference: num.reference }, updateData2);
+    const search= await selectedRepository.findOneBy({reference:num.reference})
+  
       let statusL = '';
-
       if (num.status == 1) {
         statusL = 'success';
       } else if (num.status == 3) {
         statusL = 'declined';
       }
-
-
+  
       const requestBody = {
         reference: num.reference,
         status: statusL,
         method: 'TUP_OUT',
         amount: num.amount,
         currency: num.currency,
-        url: num.url_response
+        url: num.url_response,
+        motivo:num.motivo,
+        referenceid:search.uid,
+        uid:search.merchant_id,
+        name:search.merchant_name,
+        type:search.type_transaction,
+        user:response.id
+    
       };
 
-      const respuestaCall = await this.callbackService.CallbackPayout(requestBody);
 
-      console.log(respuestaCall);
-      console.log('************************************************')
-      respuesta++
 
-      return ({
-        msg: 'Importacion exitosa',
-        result: respuesta,
-        alert2: 1
-      });
+
+  
+      // Llamada asíncrona a la API
+      updates.push(this.callbackService.CallbackPayout(requestBody).then(respuestaCall => {
+        console.log(respuestaCall);
+        console.log('************************************************');
+        respuesta++;
+      }));
     }
-
-
+  
+    await Promise.all(updates);
+  
+    return {
+      msg: 'Importación exitosa',
+      result: respuesta,
+      alert2: 1
+    };
   }
 
 

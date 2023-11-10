@@ -8,8 +8,9 @@ import {
 
   @Entity({name: 'masiva'}) 
 export class Masiva {
+  
     @PrimaryGeneratedColumn()
-  id: number;
+   id: number;
 
   @Column('varchar',{ length: 300, nullable: true })
   reference: string;
