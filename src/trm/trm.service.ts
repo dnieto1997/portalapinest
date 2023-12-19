@@ -15,8 +15,6 @@ export class TrmService {
   async create(createTrmDto: CreateTrmDto) {
     const newUser = this.trm.create(createTrmDto);
     const saveUser =  await this.trm.save(newUser);
-    
-    
     return saveUser;
   }
 
